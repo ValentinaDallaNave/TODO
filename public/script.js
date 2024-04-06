@@ -1,23 +1,9 @@
+import {addTodo, deleteTodo, completeTodo} from "./functions.js"
 const add = document.getElementById("add");
 const t_todo = document.getElementById("t_todo");
 const input_todo = document.getElementById("todo");
 let TODOS = [];
 
-const send = (todo) => {
-  return new Promise((resolve, reject) => {
-    fetch("/todo/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(todo),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        resolve(json);
-      });
-  });
-};
 
 const load = () => {
   return new Promise((resolve, reject) => {
@@ -33,56 +19,23 @@ load().then((json) => {
   render();
 });
 
-export function addTodo(todo){
-  send({ todo: todo })
-    .then(() => load())
-    .then((json) => {
-      TODOS = json.todos;
-      render();
-    });
-}
-
 add.onclick = () => {
   const todo = {
     name: input_todo.value,
     completed: false,
   };
-  addTodo(todo)
+  addTodo(todo, TODOS)
+  send({ todo: todo })
+      .then(() => load())
+      .then((json) => {
+        TODOS = json.todos;
+        render();
+        
+    });
   input_todo.value = "";
 };
 
-const completeTodo = (todo) => {
-  return new Promise((resolve, reject) => {
-    fetch("/todo/complete", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(todo),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        resolve(json);
-      });
-  });
-};
-
-const deleteTodo = (id) => {
-  return new Promise((resolve, reject) => {
-    fetch("/todo/" + id, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        resolve(json);
-      });
-  });
-};
-
-function render() {
+export function render() {
   let html = ``;
   const template = `<tr><td>%todo</td>
   <td><button type="button" id="completa" class="completa btn btn-success">%Completa</button>
