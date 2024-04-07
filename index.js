@@ -1,12 +1,12 @@
-const express = require("express");
-const http = require("http");
-const path = require("path");
+import express from "express";
+import { createServer } from "http";
+import { join } from "path";
 const app = express();
-const bodyParser = require("body-parser");
-const fs = require("fs");
+import bodyParser from "body-parser";
+import { writeFileSync, readFileSync } from "fs";
 
 function salva(todo) {
-  fs.writeFileSync("todos.json", todo);
+  writeFileSync("todos.json", todo);
 }
 
 app.use(bodyParser.json());
@@ -16,8 +16,7 @@ app.use(
   }),
 );
 
-app.use("/", express.static(path.join(__dirname, "public")));
-app.use("/", express.static(path.join("chai-script.test.js")));
+app.use("/", express.static(join("public")));
 
 let todos = [];
 app.post("/todo/add", (req, res) => {
@@ -29,7 +28,7 @@ app.post("/todo/add", (req, res) => {
 });
 
 app.get("/todo", (req, res) => {
-  todos = JSON.parse(fs.readFileSync("todos.json", "utf8"));
+  todos = JSON.parse(readFileSync("todos.json", "utf8"));
   res.json({ todos: todos });
 });
 
@@ -55,7 +54,7 @@ app.delete("/todo/:id", (req, res) => {
   res.json({ result: "Ok" });
 });
 
-const server = http.createServer(app);
-server.listen(80, () => {
+const server = createServer(app);
+server.listen(800, () => {
   console.log("- server running");
 });

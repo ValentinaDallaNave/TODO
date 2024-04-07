@@ -4,6 +4,21 @@ const t_todo = document.getElementById("t_todo");
 const input_todo = document.getElementById("todo");
 let TODOS = [];
 
+const send = (todo) => {
+  return new Promise((resolve, reject) => {
+    fetch("/todo/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todo),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        resolve(json);
+      });
+  });
+};
 
 const load = () => {
   return new Promise((resolve, reject) => {
@@ -25,17 +40,11 @@ add.onclick = () => {
     completed: false,
   };
   addTodo(todo, TODOS)
-  send({ todo: todo })
-      .then(() => load())
-      .then((json) => {
-        TODOS = json.todos;
-        render();
-        
-    });
+  console.log(TODOS)
   input_todo.value = "";
 };
 
-export function render() {
+function render() {
   let html = ``;
   const template = `<tr><td>%todo</td>
   <td><button type="button" id="completa" class="completa btn btn-success">%Completa</button>
