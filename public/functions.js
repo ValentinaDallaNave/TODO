@@ -4,7 +4,12 @@ function salva(todo) {
   writeFileSync("todos.json", todo);
 }
 
-const load = () => {
+export function read(todos){
+  todos = JSON.parse(readFileSync("todos.json", "utf8"));
+  return todos
+}
+
+export const load = () => {
   return new Promise((resolve, reject) => {
     fetch("/todo")
       .then((response) => response.json())
